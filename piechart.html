@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRAPH PLOTTER</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/graphicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="multiline.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    
+</head>
+<style>
+#graphdisplaycontainer{
+        width: 100%; 
+        height: 700px; 
+        justify-content: center;
+        align-items: center;
+    }
+    #piechart{
+        width: 100%; 
+        height: 100%; 
+        margin-left: 5%;
+    }
+    @media only screen and (max-width: 375px) {
+        #graphdisplaycontainer{
+        height: auto;
+        justify-content: center;
+        align-items: center;
+    }
+    }
+    @media only screen and (min-width: 376px) and (max-width: 480px) {
+        #graphdisplaycontainer{
+        height: auto;
+        justify-content: center;
+        align-items: center;
+    }
+
+    }
+    @media only screen and (min-width: 481px) and (max-width: 768px) {
+        #graphdisplaycontainer{
+        height: auto;
+        justify-content: center;
+        align-items: center;
+    }
+    }
+</style>
+<body>
+    <header>
+        <a href="index.html">
+            <div>
+                <h1>GRAPH PLOTTER</h1>
+                <img src="/images/pulse.jpeg" alt="headerimg">
+            </div>
+        </a>
+    </header>
+    <div class="linegraph">
+        <div id="graphinputcontainer">
+            <h2>Pie Chart</h2>
+            <form id="graphForm">
+                <div class="form-row">
+                    <label for="xValues">Labels</label>
+                    <input type="text" id="xValues" placeholder="E.g.,Names" required>
+                </div>
+                
+                <div class="form-row">
+                    <label for="yValues">Values</label>
+                    <input type="text" id="yValues" placeholder="E.g., 10, 20, 30" required>
+                </div>
+                <div class="form-row">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" placeholder="Graph Title">
+                </div>
+                <div class="form-row">
+                    <label for="legend">Legend</label>
+                    <select id="legend">
+                        <option value="labeled">Labeled</option>
+                        <option value="top">Top</option>
+                        <option value="right">Right</option>
+                        <option value="left">Left</option>
+                        <option value="bottom">Bottom</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="slice">Slice Text</label>
+                    <select id="slice">
+                        <option value="value">Values</option>
+                        <option value="percentage">Percentage</option>
+                        <option value="label">Label</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="3d">3D</label>
+                    <input type="checkbox" id="3d">
+                </div>
+                <div class="form-row">
+                    <label for="donut">Donut chart</label>
+                    <input type="checkbox" id="donut">
+                </div>
+                <div id="colorInputs">
+                    <!-- Color inputs will be dynamically generated here -->
+                </div>
+                <div class="form-row">
+                    <a id="download" style="display: none;"></a>
+                    <button id="downloadGraphButton">Download Graph</button>
+                </div>
+            </form>
+        </div>
+        <div id="graphdisplaycontainer">
+            <div id="piechart"></div>
+        </div>
+    </div>
+    <footer>
+        <h2>Contact Us</h2>
+        <div id="footer_links"> 
+            <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=GTvVlcSHvbKtqXmvxCqTRCSHfKQfrVLczjWpqJkfXMcZgFbWwxldrDnqxDKwLpbgCpTzmCvVQFbrS" target="_blank">
+                <img src="/images/email.webp" alt="Instagram">
+                <span>Email</span>
+            </a>
+            <a onclick="initiateCall('+91 7675922209')">
+                <img src="/images/Call.avif" alt="call">
+                <span>Call</span>
+            </a>
+            <a href="https://www.linkedin.com/in/harshavardhan-vemali-334976259/" target="_blank">
+                <img src="/images/Linked-in.png" alt="linked in">
+                <span>Linked-in</span>
+            </a>
+            <a href="https://github.com/HarshavardhanVemali" target="_blank">
+                <img src="/images/github.png" alt="Youtube">
+                <span>Github</span>
+            </a>
+        </div>
+        <h4>&copy; 2024. All rights reserved to <a href="https://harshaswebpage.netlify.app/" target="_blank" rel="noopener noreferrer">V.HarshaVardhan</a>.</h4>
+    </footer>
+
+    <script src="scripts.js"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+        var inputFields = document.querySelectorAll('#graphForm input, #graphForm select');
+        inputFields.forEach(function (input) {
+            input.addEventListener('input', function () {
+                drawChart();
+            });
+        });
+
+        var slicetext = document.getElementById('slice');
+        slicetext.addEventListener('change', function() {
+            drawChart();
+        });
+
+        var downloadGraphButton = document.getElementById('downloadGraphButton');
+
+        if (downloadGraphButton) {
+        downloadGraphButton.addEventListener('click', function(event) {
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+            google.visualization.events.addListener(chart, 'ready', function() {
+            var data = chart.getImageURI();
+            var downloadLink = document.createElement("a");
+            downloadLink.href = data;
+            downloadLink.download = "piechart.png";
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            });
+        });
+        }
+    });
+    
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+    
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Labels');
+            data.addColumn('number', 'Values');
+            
+            var xValues = document.getElementById('xValues').value.split(',');
+            var yValues = document.getElementById('yValues').value.split(',').map(function(value) {
+                return parseFloat(value.trim());
+            });
+            var numRows = Math.min(xValues.length, yValues.length);
+            for (var i = 0; i < numRows; i++) {
+                data.addRow([xValues[i].trim(), yValues[i]]);
+            }
+    
+            var options = {
+                'title': document.getElementById('title').value,
+                'legend': document.getElementById('legend').value,
+                'pieSliceText': document.getElementById('slice').value,
+                'is3D': document.getElementById('3d').checked,
+                'pieHole': document.getElementById('donut').checked ? 0.4 : 0,
+            };
+            
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+            chart.draw(data, options);
+            var container = document.getElementById('graphdisplaycontainer');
+            var width = container.offsetWidth;
+            var height = container.offsetHeight;
+            chart.draw(data, Object.assign(options, { width: width, height: height }));
+        }
+    </script>
+    
+    
+</body>
+</html>

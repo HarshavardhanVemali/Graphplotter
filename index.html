@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRAPH PLOTTER</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/graphicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <script src="scripts.js"></script>
+</head>
+<body>
+  <header>
+    <a href="index.html">
+        <div>
+            <h1>GRAPH PLOTTER</h1>
+            <img src="/images/pulse.jpeg" alt="headerimg">
+        </div>
+    </a>
+</header>
+    <div class="graphs">
+        <div class="graphlist">
+
+        </div>
+    </div>
+</body>
+<script>
+    const graphlist = {
+        "graph": {
+            "img": "/images/Linegraph.png",
+            "name": "Line Graph"
+        },
+        "bargraph": {
+            "img": "/images/Bargraph.png",
+            "name": "Bar Graph"
+        },
+        "histogram": {
+            "img": "/images/Histogram.png",
+            "name": "Histogram"
+        },
+        "piechart": {
+            "img": "/images/Pie chart.png",
+            "name": "Pie Chart"
+        },
+        "scatterplot": {
+            "img": "/images/scatterplot.png",
+            "name": "Scatter Plot"
+        },
+        "areagraph": {
+            "img": "/images/Areagraph.png",
+            "name": "Area Graph"
+        },
+        "doughnutchart": {
+            "img": "images/donutchart.png",
+            "name": "Doughnut Chart"
+        },
+        "radar":{
+            "img":"images/radar.png",
+            "name":"Radar Chart"
+        },
+        "polar":{
+            "img":"images/polararea.png",
+            "name":"Polar Area Chart"
+        }
+    };
+    const graphlistDiv = document.querySelector('.graphlist');
+
+    for (const key in graphlist) {
+        if(key=="graph" || key=="bargraph"){
+            if (graphlist.hasOwnProperty(key)) {
+            const graph = graphlist[key];
+            const graphDiv = document.createElement('div');
+            const anchor = document.createElement('a');
+            anchor.href = `subgraphs.html?graph=${key}`;
+            anchor.target = '_parent';
+            anchor.innerHTML = `
+                <img src="${graph.img}" alt="${graph.name}">
+                <h2>${graph.name}</h2>
+            `;
+            graphDiv.classList.add('graph-item');
+            graphDiv.appendChild(anchor);
+            graphlistDiv.appendChild(graphDiv);
+        }
+        }
+        else{
+            if (graphlist.hasOwnProperty(key)) {
+            const graph = graphlist[key];
+            const graphDiv = document.createElement('div');
+            const anchor = document.createElement('a');
+            anchor.href = `${key}.html`;
+            anchor.target = '_parent';
+            anchor.innerHTML = `
+                <img src="${graph.img}" alt="${graph.name}">
+                <h2>${graph.name}</h2>
+            `;
+            graphDiv.classList.add('graph-item');
+            graphDiv.appendChild(anchor);
+            graphlistDiv.appendChild(graphDiv);
+        }
+        }
+    }
+</script>
+<footer>
+    <h2>Contact Us</h2>
+    <div id="footer_links"> 
+        <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=GTvVlcSHvbKtqXmvxCqTRCSHfKQfrVLczjWpqJkfXMcZgFbWwxldrDnqxDKwLpbgCpTzmCvVQFbrS" target="_blank">
+            <img src="/images/email.webp" alt="Instagram">
+            <span>Email</span>
+        </a>
+        <a onclick="initiateCall('+91 7675922209')">
+            <img src="/images/Call.avif" alt="call">
+            <span>Call</span>
+        </a>
+        <a href="https://www.linkedin.com/in/harshavardhan-vemali-334976259/" target="_blank">
+            <img src="/images/Linked-in.png" alt="linked in">
+            <span>Linked-in</span>
+        </a>
+        <a href="https://github.com/HarshavardhanVemali" target="_blank">
+            <img src="/images/github.png" alt="Youtube">
+            <span>Github</span>
+        </a>
+    </div>
+    <h4>&copy; 2024. All rights reserved to <a href="https://harshaswebpage.netlify.app/" target="_blank" rel="noopener noreferrer">V.HarshaVardhan</a>.</h4>
+</footer>
+</html>

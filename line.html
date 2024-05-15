@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRAPH PLOTTER</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/graphicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="lines.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="scripts.js"></script>
+</head>
+<body>
+    <header>
+        <a href="index.html">
+            <div>
+                <h1>GRAPH PLOTTER</h1>
+                <img src="/images/pulse.jpeg" alt="headerimg">
+            </div>
+        </a>
+    </header>
+    <div class="linegraph">
+        <div id="graphinputcontainer">
+            <h2>Line Graph</h2>
+            <form id="graphForm">
+                <div class="form-row">
+                    <label for="xValues">X-Values</label>
+                    <input type="text" id="xValues" placeholder="E.g., 1, 2, 3" required>
+                </div>
+                
+                <div class="form-row">
+                    <label for="yValues">Y-Values</label>
+                    <input type="text" id="yValues" placeholder="E.g., 10, 20, 30" required>
+                </div>
+                
+                <div class="form-row">
+                    <label for="xLabel">X-Label</label>
+                    <input type="text" id="xLabel" placeholder="X-Label">
+                </div>
+                
+                <div class="form-row">
+                    <label for="yLabel">Y-Label</label>
+                    <input type="text" id="yLabel" placeholder="Y-Label">
+                </div>
+                
+                <div class="form-row">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" placeholder="Graph Title">
+                </div>
+
+                <div class="form-row">
+                    <label for="scale">Scale</label>
+                    <input type="text" id="scale" placeholder="Scale">
+                </div>
+                
+                <div class="form-row">
+                    <label for="lineColor">Line Color</label>
+                    <input type="color" id="lineColor" value="#ff0000">
+                </div>
+                
+                <div class="form-row">
+                    <label for="lineWidth">Line Width</label>
+                    <input type="number" id="lineWidth" min="1" value="1">
+                </div>
+                
+                
+                <div class="form-row">
+                    <label for="legend">Legend</label>
+                    <select id="legend">
+                        <option value="top">Top</option>
+                        <option value="right">Right</option>
+                        <option value="left">Left</option>
+                        <option value="bottom">Bottom</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <label for="lineTension">Line Tension (Adjust for better curves)</label>
+                    <input type="range" id="lineTension" min="0" max="1" step="0.1" value="0.2">
+                </div>
+                <div class="form-row">
+                    <label for="xGridLines">Show X Grid Lines</label>
+                    <input type="checkbox" id="xGridLines">
+                </div>
+                <div class="form-row">
+                    <label for="yGridLines">Show Y Grid Lines</label>
+                    <input type="checkbox" id="yGridLines">
+                </div>
+                <div class="form-row">
+                    <button id="downloadGraphButton">Download Graph</button>
+                </div>
+            </form>
+        </div>
+        <div id="graphdisplaycontainer">
+            <canvas id="lineChart"></canvas>
+        </div>
+    </div>       
+    <footer>
+        <h2>Contact Us</h2>
+        <div id="footer_links"> 
+            <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=GTvVlcSHvbKtqXmvxCqTRCSHfKQfrVLczjWpqJkfXMcZgFbWwxldrDnqxDKwLpbgCpTzmCvVQFbrS" target="_blank">
+                <img src="/images/email.webp" alt="Instagram">
+                <span>Email</span>
+            </a>
+            <a onclick="initiateCall('+91 7675922209')">
+                <img src="/images/Call.avif" alt="call">
+                <span>Call</span>
+            </a>
+            <a href="https://www.linkedin.com/in/harshavardhan-vemali-334976259/" target="_blank">
+                <img src="/images/Linked-in.png" alt="linked in">
+                <span>Linked-in</span>
+            </a>
+            <a href="https://github.com/HarshavardhanVemali" target="_blank">
+                <img src="/images/github.png" alt="Youtube">
+                <span>Github</span>
+            </a>
+        </div>
+        <h4>&copy; 2024. All rights reserved to <a href="https://harshaswebpage.netlify.app/" target="_blank" rel="noopener noreferrer">V.HarshaVardhan</a>.</h4>
+    </footer>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        generateGraph();
+
+        var inputFields = document.querySelectorAll('#graphForm input, #graphForm select');
+        inputFields.forEach(function (input) {
+            input.addEventListener('input', function () {
+                generateGraph();
+            });
+        });
+
+        var downloadGraphButton = document.getElementById('downloadGraphButton');
+        downloadGraphButton.addEventListener('click', function() {
+            event.preventDefault();
+            var canvas = document.getElementById('lineChart');
+            var link = document.createElement('a');
+            link.href = canvas.toDataURL();
+            link.download = 'graph.png';
+            link.click();
+        });
+    });
+
+    function generateGraph() {
+        var xValues = document.getElementById('xValues').value.split(',').map(function(value) {
+        return value.trim() !== '' ? parseFloat(value) : 0;
+    });
+    var yValues = document.getElementById('yValues').value.split(',').map(function(value) {
+        return value.trim() !== '' ? parseFloat(value) : 0;
+    });
+    var xLabel = document.getElementById('xLabel').value;
+    var yLabel = document.getElementById('yLabel').value;
+    var title = document.getElementById('title').value;
+    var scale = document.getElementById('scale').value;
+    var lineColor = document.getElementById('lineColor').value;
+    var lineWidth = parseInt(document.getElementById('lineWidth').value);
+    var legend = document.getElementById('legend').value;
+    var lineTension = parseFloat(document.getElementById('lineTension').value);
+    var showXGridLines = document.getElementById('xGridLines').checked;
+    var showYGridLines = document.getElementById('yGridLines').checked;
+
+    // Sort xValues and yValues based on xValues
+    var sortedData = xValues.map((value, index) => ({ x: value, y: yValues[index] }))
+                              .sort((a, b) => a.x - b.x);
+    xValues = sortedData.map(data => data.x);
+    yValues = sortedData.map(data => data.y);
+
+    generateLineGraph(xValues, yValues, xLabel, yLabel, title, scale, lineColor, lineWidth, legend, lineTension, showXGridLines, showYGridLines);
+    }
+
+    function generateLineGraph(xValues, yValues, xLabel, yLabel, title, scale, lineColor, lineWidth, legend, lineTension, showXGridLines, showYGridLines) {
+    var ctx = document.getElementById('lineChart').getContext('2d');
+
+    if(window.myChart) {
+        window.myChart.destroy();
+    }
+
+    window.myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: title,
+                data: xValues.map((value, index) => ({ x: value, y: yValues[index] })),
+                borderColor: lineColor,
+                borderWidth: lineWidth,
+                lineTension: lineTension,
+                tension: 0,
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'linear',
+                    title: {
+                        display: true,
+                        text: xLabel
+                    },
+                    grid: {
+                        display: showXGridLines
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: yLabel
+                    },
+                    grid: {
+                        display: showYGridLines
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: legend,
+                    align: 'center',
+                    labels: {
+                        color: '#f72541',
+                        font: {
+                            weight: 'bold'
+                        },
+                    }
+                }
+            },
+            layout: {
+                padding: {
+                    left: 50,
+                    right: 50,
+                    top: 0,
+                    bottom: 0
+                }
+            },
+            responsive: true,
+            aspectRatio: scale ? parseFloat(scale) : undefined,
+        }
+    });
+}
+</script>
+
+</html>

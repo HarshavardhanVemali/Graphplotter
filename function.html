@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRAPH PLOTTER</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/graphicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="lines.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+</head>
+<body>
+    <header>
+        <a href="index.html">
+            <div>
+                <h1>GRAPH PLOTTER</h1>
+                <img src="/images/pulse.jpeg" alt="headerimg">
+            </div>
+        </a>
+    </header>
+    <div class="linegraph">
+        <div id="graphinputcontainer">
+            <h2>Function Graph</h2>
+            <form id="graphForm"> <!-- Prevent form submission -->
+                <div class="form-row">
+                    <label for="equation">Function</label>
+                    <input type="text" id="equation" placeholder="E.g.,sin(x)" value="">
+                </div>
+                <div class="form-row">
+                    <label for="xLabel">X-Label</label>
+                    <input type="text" id="xLabel" placeholder="X-Label" value="">
+                </div>
+                <div class="form-row">
+                    <label for="yLabel">Y-Label</label>
+                    <input type="text" id="yLabel" placeholder="Y-Label" value="">
+                </div>
+                <div class="form-row">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" placeholder="Graph Title" value="">
+                </div>
+                <div class="form-row">
+                    <label for="scale">Scale</label>
+                    <input type="text" id="scale" placeholder="Scale" value="">
+                </div>
+                <div class="form-row">
+                    <label for="lineColor">Line Color</label>
+                    <input type="color" id="lineColor" value="#ff0000">
+                </div>
+                <div class="form-row">
+                    <label for="lineWidth">Line Width</label>
+                    <input type="number" id="lineWidth" min="1" value="1">
+                </div>
+                <div class="form-row">
+                    <label for="numPoints">Number of Points</label>
+                    <input type="number" id="numPoints" min="10" value="100">
+                </div>
+                <div class="form-row">
+                    <label for="legend">Legend</label>
+                    <select id="legend">
+                        <option value="top">Top</option>
+                        <option value="right">Right</option>
+                        <option value="left">Left</option>
+                        <option value="bottom">Bottom</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="xGridLines">Show X Grid Lines</label>
+                    <input type="checkbox" id="xGridLines" checked>
+                </div>
+                <div class="form-row">
+                    <label for="yGridLines">Show Y Grid Lines</label>
+                    <input type="checkbox" id="yGridLines" checked>
+                </div>
+                <div class="form-row">
+                    <button type="button" id="downloadGraphButton">Download Graph</button>
+                </div>
+            </form>
+        </div>
+        <div id="graphdisplaycontainer">
+            <canvas id="functionChart"></canvas>
+        </div>
+    </div>
+    <footer>
+        <h2>Contact Us</h2>
+        <div id="footer_links"> 
+            <a href="mailto:youremail@example.com">
+                <img src="/images/email.webp" alt="Instagram">
+                <span>Email</span>
+            </a>
+            <a href="tel:+917675922209">
+                <img src="/images/Call.avif" alt="call">
+                <span>Call</span>
+            </a>
+            <a href="https://www.linkedin.com/in/harshavardhan-vemali-334976259/" target="_blank">
+                <img src="/images/Linked-in.png" alt="linked in">
+                <span>Linked-in</span>
+            </a>
+            <a href="https://github.com/HarshavardhanVemali" target="_blank">
+                <img src="/images/github.png" alt="Youtube">
+                <span>Github</span>
+            </a>
+        </div>
+        <h4>&copy; 2024. All rights reserved to <a href="https://harshaswebpage.netlify.app/" target="_blank" rel="noopener noreferrer">V.HarshaVardhan</a>.</h4>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+    initializeEmptyGraph();
+
+    var inputFields = document.querySelectorAll('#graphForm input, #graphForm select');
+    inputFields.forEach(function (input) {
+        input.addEventListener('input', function () {
+            generateGraph();
+        });
+    });
+});
+
+function initializeEmptyGraph() {
+    generateFunctionGraph('sin(x)', 'X', 'Y', 'Sine Function Graph', '', '#000000', 1, 'top', true, true, 100);
+}
+
+function generateGraph() {
+    var equation = document.getElementById("equation").value;
+    var xLabel = document.getElementById("xLabel").value;
+    var yLabel = document.getElementById("yLabel").value;
+    var title = document.getElementById("title").value;
+    var xGridLines = document.getElementById("xGridLines").checked;
+    var yGridLines = document.getElementById("yGridLines").checked;
+    var scale = document.getElementById('scale').value;
+    var lineColor = document.getElementById('lineColor').value;
+    var lineWidth = parseInt(document.getElementById('lineWidth').value);
+    var legendPosition = document.getElementById('legend').value;
+    var numPoints = parseInt(document.getElementById('numPoints').value);
+    generateFunctionGraph(equation, xLabel, yLabel, title, scale, lineColor, lineWidth, legendPosition, xGridLines, yGridLines, numPoints);
+}
+
+function generateFunctionGraph(equation, xLabel, yLabel, title, scale, lineColor, lineWidth, legendPosition, xGridLines, yGridLines, numPoints) {
+    var ctx = document.getElementById('functionChart').getContext('2d');
+    var labels = [];
+    var data = [];
+
+    if (equation !== '') {
+        try {
+            // Regular expression to match function name and argument
+            const funcRegex = /([a-z]+)\(([^)]+)\)/i;
+            const matches = equation.match(funcRegex);
+
+            if (matches) {
+                const funcName = matches[1].toLowerCase();
+                const arg = parseFloat(matches[2]);
+                var func;
+                if (funcName === 'sin') {
+                    func = (x) => Math.sin(arg);
+                } else if (funcName === 'cos') {
+                    func = (x) => Math.cos(arg);
+                } else if (funcName === 'tan') {
+                    func = (x) => Math.tan(arg);
+                } else if (funcName === 'exp') {
+                    func = (x) => Math.exp(arg);
+                } else if (funcName === 'log') {
+                    func = (x) => Math.log(arg);
+                } else {
+                    console.error('Unsupported function:', funcName);
+                    return;
+                }
+
+                var minX = -5 * Math.PI;
+                var maxX = 5 * Math.PI;
+                var step = (maxX - minX) / (numPoints - 1);
+
+                for (var i = minX; i <= maxX; i += step) {
+                    labels.push(i);
+                    data.push(func(i));
+                }
+            } else {
+                if (equation !== '') {
+
+                try {
+
+                const parsedEq = equation.toLowerCase();
+
+                var func;
+
+                var isConstant = !parsedEq.includes('x') && !isNaN(parseFloat(equation));
+
+                if (isConstant) {
+
+                    var value = parseFloat(equation);
+
+                    labels.push(value);
+
+                    data.push(value);
+
+                } else if (parsedEq.includes('sin')) {
+
+                    func = (x) => Math.sin(x);
+
+                } else if (parsedEq.includes('cos')) {
+
+                    func = (x) => Math.cos(x);
+
+                } else if (parsedEq.includes('tan')) {
+
+                    func = (x) => Math.tan(x);
+
+                } else if (parsedEq.includes('exp')) {
+
+                    func = (x) => Math.exp(x);
+
+                } else if (parsedEq.includes('log')) {
+
+                    func = (x) => Math.log(x);
+
+                } else {
+                    func = (x) => eval(parsedEq);
+
+                }
+                var minX = -5 * Math.PI;
+
+                var maxX = 5 * Math.PI;
+
+                var step = (maxX - minX) / (numPoints - 1);
+                for (var i = minX; i <= maxX; i += step) {
+                    labels.push(i);
+                    data.push(func(i));
+                }
+                } catch (error) {
+                console.error('Error parsing or evaluating equation:', error);
+                return;
+                }
+                }
+            }
+        } catch (error) {
+            console.error('Error parsing or evaluating equation:', error);
+            return;
+        }
+    }
+    if (window.myFunctionChart) {
+        window.myFunctionChart.destroy();
+    }
+    try {
+        window.myFunctionChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: equation,
+                    data: data,
+                    borderColor: lineColor,
+                    borderWidth: lineWidth
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: xLabel
+                        },
+                        grid: {
+                            display: xGridLines
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: yLabel
+                        },
+                        grid: {
+                            display: yGridLines
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: title
+                    },
+                    legend: {
+                        display: true,
+                        position: legendPosition,
+                        labels: {
+                            color: '#f72541',
+                            font: {
+                                weight: 'bold'
+                            },
+                        }
+                    }
+                },
+                layout: {
+                    padding: {
+                        left: 50,
+                        right: 50,
+                        top: 0,
+                        bottom: 0
+                    }
+                },
+                responsive: true,
+                aspectRatio: scale ? parseFloat(scale) : undefined,
+            }
+        });
+    } catch (error) {
+        console.error('Error generating graph:', error);
+    }
+}
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,696 @@
+.linegraph {
+    margin-top: 100px;
+    display: flex;
+    justify-content: space-between; 
+    margin-bottom: 30px;
+}
+
+#graphinputcontainer {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    width: 30%;
+    padding: 20px; 
+    margin-left: 10px;
+}
+
+#graphinputcontainer h2 {
+    padding-left: 30%;
+}
+
+#graphForm {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.form-row input {
+    border-radius: 5px;
+    border: 1px solid lightgray;
+    transition: transform 0.1s ease;
+    width: 250px;
+    height: 30px;
+}
+.form-row input[type="checkbox"]{
+    height: 20px;
+}
+.form-row input[type="color"]{
+    width: 50px;
+}
+
+.form-row input:hover {
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+label {
+    width: 200px;
+    flex-shrink: 0;
+    margin-right: 20px;
+    font-weight: 500;
+}
+
+#graphForm button {
+    width: 200px;
+    border-radius: 5px;
+    height: 30px;
+    margin-top: 10px;
+    cursor: pointer;
+    margin-left: 25%;
+    background-color: dodgerblue;
+    border: none;
+    height: 40px;
+    font-size: 15px;
+}
+#graphForm button:hover{
+    background-color: lightskyblue;
+}
+
+#graphdisplaycontainer {
+    width: 65%;
+}
+
+canvas#lineChart {
+    margin-top: 40px;
+    width: 100%; 
+    margin-right: 10px;
+}
+#graphdisplaycontainer {
+  background-color: white;  
+}
+.form-row select{
+    height: 30px;
+    width: 200px;
+}
+#linearchart{
+    width: 100%;
+}
+@media only screen and (max-width: 375px) {
+    .linegraph {
+        margin-top: 60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    #graphinputcontainer {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        width: 80%;
+        padding: 20px;
+        margin: 0;
+        margin-bottom: 20px;
+    }
+
+    #graphinputcontainer h2 {
+        padding-left: 0;
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    #graphForm {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+
+    .form-row {
+        display: flex;
+        flex-direction: row; 
+        align-items: center;
+        justify-content: space-between; 
+        margin-bottom: 10px;
+    }
+
+    .form-row input {
+        width: calc(50% - 10px); 
+        max-width: 150px; 
+        height: 30px; 
+        margin-right: 3px;
+    }
+
+    .form-row input[type="checkbox"],
+    .form-row input[type="color"],
+    .form-row select {
+        width: 50px;
+    }
+
+    .form-row input:hover {
+        border: 2px solid black;
+        border-radius: 5px;
+    }
+
+    label {
+        width: calc(50% - 50px); 
+        flex-shrink: 0;
+        font-weight: 500;
+        font-size: 12px;
+        margin-right: 10px;
+    }
+
+    #graphForm button {
+        width: 100%;
+        max-width: 200px;
+        height: 40px;
+        margin-top: 10px;
+        cursor: pointer;
+        background-color: dodgerblue;
+        border: none;
+        font-size: 15px;
+        margin-right: 25%;
+    }
+
+    #graphdisplaycontainer {
+        width: 100%;
+        height: auto;
+    }
+
+    canvas#lineChart {
+        margin-top: 40px;
+        width: 100%; 
+    }
+
+    #graphdisplaycontainer {
+        background-color: white;
+    }
+
+    .form-row select {
+        height: 30px;
+        width: calc(50% - 10px); 
+        max-width: 150px;
+        margin-right: 10px;
+    }
+
+    #linearchart {
+        width: 100%;
+    }
+}
+@media only screen and (min-width: 376px) and (max-width: 480px) {
+    .linegraph {
+        margin-top: 60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    #graphinputcontainer {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        width: 80%;
+        padding: 20px;
+        margin: 0;
+        margin-bottom: 20px;
+    }
+
+    #graphinputcontainer h2 {
+        padding-left: 0; 
+        text-align: center;
+        font-size: 18px; 
+        margin-bottom: 20px; 
+    }
+
+    #graphForm {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+
+    .form-row {
+        display: flex;
+        flex-direction: row; 
+        align-items: center;
+        justify-content: space-between; 
+        margin-bottom: 10px;
+    }
+
+    .form-row input {
+        width: calc(50% - 10px); 
+        max-width: 150px;
+        height: 30px; 
+        margin-right: 3px;
+    }
+
+    .form-row input[type="checkbox"],
+    .form-row input[type="color"],
+    .form-row select {
+        width: 50px;
+    }
+
+    .form-row input:hover {
+        border: 2px solid black;
+        border-radius: 5px;
+    }
+
+    label {
+        width: calc(50% - 50px); 
+        flex-shrink: 0;
+        font-weight: 500;
+        font-size: 12px;
+        margin-right: 10px;
+    }
+
+    #graphForm button {
+        width: 100%;
+        max-width: 200px;
+        height: 40px;
+        margin-top: 10px;
+        cursor: pointer;
+        background-color: dodgerblue;
+        border: none;
+        font-size: 15px;
+        margin-right: 25%;
+    }
+
+    #graphdisplaycontainer {
+        width: 100%;
+        height: auto;
+    }
+
+    canvas#lineChart {
+        margin-top: 40px;
+        width: 100%; 
+    }
+
+    #graphdisplaycontainer {
+        background-color: white;
+    }
+
+    .form-row select {
+        height: 30px;
+        width: calc(50% - 10px); 
+        max-width: 150px; 
+        margin-right: 10px;
+    }
+
+    #linearchart {
+        width: 100%;
+    }
+}
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+    .linegraph {
+        margin-top: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    #graphinputcontainer {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        width: 85%;
+        padding: 20px;
+        margin: 0;
+        margin-bottom: 20px;
+    }
+
+    #graphinputcontainer h2 {
+        padding-left: 0; 
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 20px; 
+    }
+
+    #graphForm {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+
+    .form-row {
+        display: flex;
+        flex-direction: row; 
+        align-items: center;
+        justify-content: space-between; 
+        margin-bottom: 10px;
+    }
+
+    .form-row input {
+        width: calc(60% - 10px); 
+        max-width: 250px; 
+        height: 30px;
+        margin-right: 3px;
+    }
+
+    .form-row input[type="checkbox"],
+    .form-row input[type="color"],
+    .form-row select {
+        width: 50px;
+    }
+
+    .form-row input:hover {
+        border: 2px solid black;
+        border-radius: 5px;
+    }
+
+    label {
+        width: calc(40% - 50px); 
+        flex-shrink: 0;
+        font-weight: 500;
+        font-size: 14px;
+        margin-right: 10px;
+    }
+
+    #graphForm button {
+        width: 100%;
+        max-width: 200px;
+        height: 40px;
+        margin-top: 10px;
+        cursor: pointer;
+        background-color: dodgerblue;
+        border: none;
+        font-size: 15px;
+        margin-right: 25%;
+    }
+
+    #graphdisplaycontainer {
+        width: 100%;
+        height: auto;
+    }
+
+    canvas#lineChart {
+        margin-top: 40px;
+        width: 100%;
+    }
+
+    #graphdisplaycontainer {
+        background-color: white;
+    }
+
+    .form-row select {
+        height: 30px;
+        width: calc(50% - 10px); 
+        max-width: 150px;
+        margin-right: 10px; 
+    }
+
+    #linearchart {
+        width: 100%;
+    }
+}
+@media only screen and (min-width: 769px) and (max-width: 979px) {
+        .linegraph {
+        margin-top: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    #graphinputcontainer {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        width: 85%;
+        padding: 20px;
+        margin: 0;
+        margin-bottom: 20px;
+    }
+
+    #graphinputcontainer h2 {
+        padding-left: 0; 
+        text-align: center;
+        font-size: 18px; 
+        margin-bottom: 20px; 
+    }
+
+    #graphForm {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+
+    .form-row {
+        display: flex;
+        flex-direction: row; 
+        align-items: center;
+        justify-content: space-between; 
+        margin-bottom: 10px;
+    }
+
+    .form-row input {
+        width: calc(70% - 10px);
+        max-width: 300px;
+        height: 30px;
+        margin-right: 3px;
+    }
+
+    .form-row input[type="checkbox"],
+    .form-row input[type="color"],
+    .form-row select {
+        max-width: 50px;
+    }
+
+    .form-row input:hover {
+        border: 2px solid black;
+        border-radius: 5px;
+    }
+
+    label {
+        width: calc(40% - 50px); 
+        flex-shrink: 0;
+        font-weight: 500;
+        font-size: 16px;
+        margin-right: 20px;
+    }
+
+    #graphForm button {
+        width: 100%;
+        max-width: 200px;
+        height: 40px;
+        margin-top: 10px;
+        cursor: pointer;
+        background-color: dodgerblue;
+        border: none;
+        font-size: 15px;
+        margin-right: 25%;
+    }
+
+    #graphdisplaycontainer {
+        width: 100%;
+        height: auto;
+    }
+
+    canvas#lineChart {
+        margin-top: 40px;
+        width: 100%;
+    }
+
+    #graphdisplaycontainer {
+        background-color: white;
+    }
+
+    .form-row select {
+        height: 30px;
+        width: calc(50% - 10px); 
+        max-width: 150px;
+        margin-right: 10px; 
+    }
+
+    #linearchart {
+        width: 100%;
+    }
+}
+@media only screen and (min-width: 980px) and (max-width: 1024px){
+    .linegraph {
+        margin-top: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    #graphinputcontainer {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        width: 85%;
+        padding: 20px;
+        margin: 0;
+        margin-bottom: 20px;
+    }
+
+    #graphinputcontainer h2 {
+        padding-left: 0;
+        text-align: center;
+        font-size: 18px; 
+        margin-bottom: 20px;
+    }
+
+    #graphForm {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+
+    .form-row {
+        display: flex;
+        flex-direction: row; 
+        align-items: center;
+        justify-content: space-between; 
+        margin-bottom: 10px;
+    }
+
+    .form-row input {
+        width: calc(70% - 10px);
+        max-width: 400px;
+        height: 30px;
+        margin-right: 3px;
+    }
+
+    .form-row input[type="checkbox"],
+    .form-row input[type="color"],
+    .form-row select {
+        max-width: 50px;
+    }
+
+    .form-row input:hover {
+        border: 2px solid black;
+        border-radius: 5px;
+    }
+
+    label {
+        width: calc(40% - 50px); 
+        flex-shrink: 0;
+        font-weight: 500;
+        font-size: 18px;
+        margin-right: 20px;
+    }
+
+    #graphForm button {
+        width: 100%;
+        max-width: 200px;
+        height: 40px;
+        margin-top: 10px;
+        cursor: pointer;
+        background-color: dodgerblue;
+        border: none;
+        font-size: 15px;
+        margin-left: 35%;
+    }
+
+    #graphdisplaycontainer {
+        width: 100%;
+        height: auto;
+    }
+
+    canvas#lineChart {
+        margin-top: 40px;
+        width: 100%;
+    }
+
+    #graphdisplaycontainer {
+        background-color: white;
+    }
+
+    .form-row select {
+        height: 30px;
+        width: calc(50% - 10px);
+        max-width: 150px; 
+        margin-right: 10px;
+    }
+
+    #linearchart {
+        width: 100%;
+    }
+}
+@media only screen and (min-width: 1025px) and (max-width: 1160px){
+    .linegraph {
+        margin-top: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    #graphinputcontainer {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        width: 85%;
+        padding: 20px;
+        margin: 0;
+        margin-bottom: 20px;
+    }
+
+    #graphinputcontainer h2 {
+        padding-left: 0;
+        text-align: center;
+        font-size: 18px; 
+        margin-bottom: 20px;
+    }
+
+    #graphForm {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+
+    .form-row {
+        display: flex;
+        flex-direction: row; 
+        align-items: center;
+        justify-content: space-between; 
+        margin-bottom: 10px;
+    }
+
+    .form-row input {
+        width: calc(70% - 10px);
+        max-width: 400px;
+        height: 30px;
+        margin-right: 3px;
+    }
+
+    .form-row input[type="checkbox"],
+    .form-row input[type="color"],
+    .form-row select {
+        max-width: 50px;
+    }
+
+    .form-row input:hover {
+        border: 2px solid black;
+        border-radius: 5px;
+    }
+
+    label {
+        width: calc(40% - 50px); 
+        flex-shrink: 0;
+        font-weight: 500;
+        font-size: 18px;
+        margin-right: 20px;
+    }
+
+    #graphForm button {
+        width: 100%;
+        max-width: 200px;
+        height: 40px;
+        margin-top: 10px;
+        cursor: pointer;
+        background-color: dodgerblue;
+        border: none;
+        font-size: 15px;
+        margin-left: 35%;
+    }
+
+    #graphdisplaycontainer {
+        width: 100%;
+        height: auto;
+    }
+
+    canvas#lineChart {
+        margin-top: 40px;
+        width: 100%;
+    }
+
+    #graphdisplaycontainer {
+        background-color: white;
+    }
+
+    .form-row select {
+        height: 30px;
+        width: calc(50% - 10px);
+        max-width: 150px; 
+        margin-right: 10px;
+    }
+
+    #linearchart {
+        width: 100%;
+    }
+}

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRAPH PLOTTER</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/graphicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="multiline.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js library -->
+</head>
+<body>
+    <header>
+        <a href="index.html">
+            <div>
+                <h1>GRAPH PLOTTER</h1>
+                <img src="/images/pulse.jpeg" alt="headerimg">
+            </div>
+        </a>
+    </header>
+    <div class="linegraph">
+        <div id="graphinputcontainer">
+            <h2>Multi line Graph</h2>
+            <form id="graphForm">
+                <div class="form-row">
+                    <label for="numberofgraphs">Number of Graphs</label>
+                    <input type="number" id="lineWidth" min="1" value="1">
+                </div>
+                <div id="graphInputsContainer">
+                    <!-- Graph inputs will be loaded here -->
+                </div>
+                <div class="form-row">
+                    <button type="button" id="addGraphButton">Add Graph</button>
+                </div>
+                <div class="form-row">
+                    <label for="xLabel">X-Label</label>
+                    <input type="text" id="xLabel" placeholder="X-Label">
+                </div>
+                
+                <div class="form-row">
+                    <label for="yLabel">Y-Label</label>
+                    <input type="text" id="yLabel" placeholder="Y-Label">
+                </div>
+                
+                <div class="form-row">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" placeholder="Graph Title">
+                </div>
+
+                <div class="form-row">
+                    <label for="scale">Scale</label>
+                    <input type="text" id="scale" placeholder="Scale">
+                </div>
+                
+                <div class="form-row">
+                    <label for="backgroundColor">Background Color</label>
+                    <input type="color" id="backgroundColor" value="#ffffff">
+                </div>
+                
+                <div class="form-row">
+                    <label for="legend">Legend</label>
+                    <select id="legend">
+                        <option value="top-left">Top Left</option>
+                        <option value="top-right">Top Right</option>
+                        <option value="bottom-left">Bottom Left</option>
+                        <option value="bottom-right">Bottom Right</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <label for="xGridLines">Show X Grid Lines</label>
+                    <input type="checkbox" id="xGridLines">
+                </div>
+                <div class="form-row">
+                    <label for="yGridLines">Show Y Grid Lines</label>
+                    <input type="checkbox" id="yGridLines">
+                </div>
+                <div class="form-row">
+                    <button id="downloadGraphButton">Download Graph</button>
+                </div>
+            </form>
+        </div>
+        <div id="graphdisplaycontainer">
+            <canvas id="lineChart"></canvas>
+        </div>
+    </div>
+    <footer>
+        <h2>Contact Us</h2>
+        <div id="footer_links"> 
+            <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=GTvVlcSHvbKtqXmvxCqTRCSHfKQfrVLczjWpqJkfXMcZgFbWwxldrDnqxDKwLpbgCpTzmCvVQFbrS" target="_blank">
+                <img src="/images/email.webp" alt="Instagram">
+                <span>Email</span>
+            </a>
+            <a onclick="initiateCall('+91 7675922209')">
+                <img src="/images/Call.avif" alt="call">
+                <span>Call</span>
+            </a>
+            <a href="https://www.linkedin.com/in/harshavardhan-vemali-334976259/" target="_blank">
+                <img src="/images/Linked-in.png" alt="linked in">
+                <span>Linked-in</span>
+            </a>
+            <a href="https://github.com/HarshavardhanVemali" target="_blank">
+                <img src="/images/github.png" alt="Youtube">
+                <span>Github</span>
+            </a>
+        </div>
+        <h4>&copy; 2024. All rights reserved to <a href="https://harshaswebpage.netlify.app/" target="_blank" rel="noopener noreferrer">V.HarshaVardhan</a>.</h4>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Load graph inputs when the page loads
+            loadGraphInputs();
+    
+            // Event listener for the number of graphs input
+            document.getElementById('lineWidth').addEventListener('input', loadGraphInputs);
+    
+            // Event listener for delete graph buttons
+            
+
+    
+            // Event listener for input fields of each graph
+            document.addEventListener('input', function (event) {
+                if (event.target.matches('.graph-container input')) {
+                    renderGraph();
+                }
+            });
+    
+            // Event listener for add graph button
+            document.getElementById('addGraphButton').addEventListener('click', function () {
+                loadGraphInputs();
+            });
+    
+            // Event listener for download graph button
+            document.getElementById('addGraphButton').addEventListener('click', function () {
+                var numberOfGraphs = parseInt(document.getElementById('lineWidth').value);
+                numberOfGraphs++;
+                document.getElementById('lineWidth').value = numberOfGraphs;
+                loadGraphInputs();
+            });
+            function loadGraphInputs() {
+                var numberOfGraphs = parseInt(document.getElementById('lineWidth').value);
+                var graphInputsContainer = document.getElementById('graphInputsContainer');
+                
+                for (var i = graphInputsContainer.children.length; i < numberOfGraphs; i++) {
+                    var graphNumber = i + 1;
+                    var graphInputsHTML = `
+                        <div class="graph-container" data-graph="${graphNumber}">
+                            <h3>Graph ${graphNumber}</h3>
+                            <div class="form-row">
+                                <label for="xValues${graphNumber}">X-Values</label>
+                                <input type="text" id="xValues${graphNumber}" placeholder="E.g., 1, 2, 3" required>
+                            </div>
+                            <div class="form-row">
+                                <label for="yValues${graphNumber}">Y-Values</label>
+                                <input type="text" id="yValues${graphNumber}" placeholder="E.g., 10, 20, 30" required>
+                            </div>
+                            <div class="form-row">
+                                <label for="lineColor${graphNumber}">Line Color</label>
+                                <input type="color" id="lineColor${graphNumber}" value="#ff0000">
+                            </div>
+                            <div class="form-row">
+                                <label for="lineWidth${graphNumber}">Line Width</label>
+                                <input type="number" id="lineWidth${graphNumber}" min="1" value="1">
+                            </div>
+                            <div class="form-row">
+                                <label for="lineTension${graphNumber}">Line Tension (Adjust for better curves)</label>
+                                <input type="range" id="lineTension${graphNumber}" min="0" max="1" step="0.1" value="0.2">
+                            </div>
+                            <div class="form-row">
+                                <button type="button" class="deleteGraphButton" data-graph="${graphNumber}">Delete Graph</button>
+                            </div>
+                        </div>`;
+                    graphInputsContainer.insertAdjacentHTML('beforeend', graphInputsHTML);
+                }
+                renderGraph();
+            }
+    
+            // Function to render the graph after deleting a graph container
+            function renderGraph() {
+                // Get all the graph data
+                var graphData = [];
+                var numberOfGraphs = document.getElementById('lineWidth').value;
+                for (var i = 0; i < numberOfGraphs; i++) {
+                    var graphNumber = i + 1;
+                    var xValuesInput = document.getElementById(`xValues${graphNumber}`).value.trim();
+                    var yValuesInput = document.getElementById(`yValues${graphNumber}`).value.trim();
+                    var lineColor = document.getElementById(`lineColor${graphNumber}`).value;
+                    var lineWidth = document.getElementById(`lineWidth${graphNumber}`).value;
+                    var lineTension = document.getElementById(`lineTension${graphNumber}`).value;
+    
+                    var xValues = xValuesInput.split(',').map(parseFloat);
+                    var yValues = yValuesInput.split(',').map(parseFloat);
+    
+                    graphData.push({
+                        label: `Graph ${graphNumber}`,
+                        data: xValues.map((x, index) => ({ x, y: yValues[index] })),
+                        borderColor: lineColor,
+                        borderWidth: lineWidth,
+                        lineTension: lineTension
+                    });
+                }
+    
+                // Get graph configuration options
+                var xLabel = document.getElementById('xLabel').value.trim();
+                var yLabel = document.getElementById('yLabel').value.trim();
+                var title = document.getElementById('title').value.trim();
+                var backgroundColor = document.getElementById('backgroundColor').value;
+                var legendPosition = document.getElementById('legend').value;
+                var showXGridLines = document.getElementById('xGridLines').checked;
+                var showYGridLines = document.getElementById('yGridLines').checked;
+                var scale = document.getElementById('scale').value.trim();
+    
+                // Render the graph using Chart.js
+                renderLineGraph(graphData, xLabel, yLabel, title, backgroundColor, legendPosition, showXGridLines, showYGridLines, scale);
+            }
+            document.addEventListener('click', function (event) {
+                if (event.target.classList.contains('deleteGraphButton')) {
+                    var graphNumber = event.target.getAttribute('data-graph');
+                    var graphContainer = document.querySelector(`.graph-container[data-graph="${graphNumber}"]`);
+                    if (graphContainer) {
+                    graphContainer.remove();
+                    var numberOfGraphs = parseInt(document.getElementById('lineWidth').value) - 1;
+                    document.getElementById('lineWidth').value = numberOfGraphs;
+                    renderGraph();
+                    }
+                }
+            });
+        });
+        function renderLineGraph(data, xLabel, yLabel, title, backgroundColor, legendPosition, showXGridLines, showYGridLines, scale) {
+            var ctx = document.getElementById('lineChart').getContext('2d');
+            if(window.myChart) {
+                window.myChart.destroy();
+            }
+            window.myChart = new Chart(ctx, {
+                type:'line',
+                
+                options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: xLabel
+                        },
+                        grid: {
+                            display: showXGridLines
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: yLabel
+                        },
+                        grid: {
+                            display: showYGridLines
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                            position: legend,
+                            align: 'center',
+                            labels: {
+                                color: '#f72541',
+                                font: {
+                                weight: 'bold'
+                                },
+                            }
+                    }
+                }
+            }
+            });
+        }
+    </script>
+    
+</body>
+</html>

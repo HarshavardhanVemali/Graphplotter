@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRAPH PLOTTER</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/graphicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="lines.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="scripts.js"></script>
+</head>
+<body>
+    <header>
+        <a href="index.html">
+            <div>
+                <h1>GRAPH PLOTTER</h1>
+                <img src="/images/pulse.jpeg" alt="headerimg">
+            </div>
+        </a>
+    </header>
+    <div class="linegraph">
+        <div id="graphinputcontainer">
+            <h2>Scatter Plot</h2>
+            <form id="graphForm">
+                <div class="form-row">
+                    <label for="xValues">X-Values</label>
+                    <input type="text" id="xValues" placeholder="E.g., 1, 2, 3" required>
+                </div>
+                
+                <div class="form-row">
+                    <label for="yValues">Y-Values</label>
+                    <input type="text" id="yValues" placeholder="E.g., 10, 20, 30" required>
+                </div>
+                
+                <div class="form-row">
+                    <label for="xLabel">X-Label</label>
+                    <input type="text" id="xLabel" placeholder="X-Label">
+                </div>
+                
+                <div class="form-row">
+                    <label for="yLabel">Y-Label</label>
+                    <input type="text" id="yLabel" placeholder="Y-Label">
+                </div>
+                
+                <div class="form-row">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" placeholder="Graph Title">
+                </div>
+
+                <div class="form-row">
+                    <label for="pointSize">Point Size</label>
+                    <input type="number" id="pointSize" min="1" value="5">
+                </div>
+                
+                <div class="form-row">
+                    <label for="pointStyle">Point Style</label>
+                    <select id="pointStyle">
+                        <option value="circle">Circle</option>
+                        <option value="cross">Cross</option>
+                        <option value="triangle">Triangle</option>
+                        <option value="rect">Rectangle</option>
+                        <option value="star">Star</option>
+                        <option value="line">Line</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="pointerColor">Pointer Color</label>
+                    <input type="color" id="pointerColor" value="#ff0000">
+                </div>
+                
+                <div class="form-row">
+                    <label for="backgroundColor">Background Color</label>
+                    <input type="color" id="backgroundColor" value="#ffffff">
+                </div>
+                
+                <div class="form-row">
+                    <label for="legend">Legend</label>
+                    <select id="legend">
+                        <option value="top">Top</option>
+                        <option value="right">Right</option>
+                        <option value="left">Left</option>
+                        <option value="bottom">Bottom</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="xGridLines">Show X Grid Lines</label>
+                    <input type="checkbox" id="xGridLines">
+                </div>
+                <div class="form-row">
+                    <label for="yGridLines">Show Y Grid Lines</label>
+                    <input type="checkbox" id="yGridLines">
+                </div>
+                <div class="form-row">
+                    <button id="downloadGraphButton">Download Graph</button>
+                </div>
+            </form>
+        </div>
+        <div id="graphdisplaycontainer">
+            <canvas id="scatterChart"></canvas>
+        </div>
+    </div>       
+    <footer>
+        <h2>Contact Us</h2>
+        <div id="footer_links"> 
+            <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=GTvVlcSHvbKtqXmvxCqTRCSHfKQfrVLczjWpqJkfXMcZgFbWwxldrDnqxDKwLpbgCpTzmCvVQFbrS" target="_blank">
+                <img src="/images/email.webp" alt="Instagram">
+                <span>Email</span>
+            </a>
+            <a onclick="initiateCall('+91 7675922209')">
+                <img src="/images/Call.avif" alt="call">
+                <span>Call</span>
+            </a>
+            <a href="https://www.linkedin.com/in/harshavardhan-vemali-334976259/" target="_blank">
+                <img src="/images/Linked-in.png" alt="linked in">
+                <span>Linked-in</span>
+            </a>
+            <a href="https://github.com/HarshavardhanVemali" target="_blank">
+                <img src="/images/github.png" alt="Youtube">
+                <span>Github</span>
+            </a>
+        </div>
+        <h4>&copy; 2024. All rights reserved to <a href="https://harshaswebpage.netlify.app/" target="_blank" rel="noopener noreferrer">V.HarshaVardhan</a>.</h4>
+    </footer>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        generateGraph();
+
+        var inputFields = document.querySelectorAll('#graphForm input, #graphForm select');
+        inputFields.forEach(function (input) {
+            input.addEventListener('input', function () {
+                generateGraph();
+            });
+        });
+
+        var downloadGraphButton = document.getElementById('downloadGraphButton');
+        downloadGraphButton.addEventListener('click', function() {
+            event.preventDefault();
+            var canvas = document.getElementById('scatterChart');
+            var link = document.createElement('a');
+            link.href = canvas.toDataURL();
+            link.download = 'graph.png';
+            link.click();
+        });
+    });
+
+    function generateGraph() {
+        var xValues = document.getElementById('xValues').value.split(',').map(function(value) {
+            return value.trim() !== '' ? parseFloat(value) : 0;
+        });
+        var yValues = document.getElementById('yValues').value.split(',').map(function(value) {
+            return value.trim() !== '' ? parseFloat(value) : 0;
+        });
+        var xLabel = document.getElementById('xLabel').value;
+        var yLabel = document.getElementById('yLabel').value;
+        var title = document.getElementById('title').value;
+        var pointSize = parseInt(document.getElementById('pointSize').value);
+        var pointStyle = document.getElementById('pointStyle').value;
+        var pointerColor = document.getElementById('pointerColor').value;
+        var backgroundColor = document.getElementById('backgroundColor').value;
+        var legend = document.getElementById('legend').value;
+        var showXGridLines = document.getElementById('xGridLines').checked;
+        var showYGridLines = document.getElementById('yGridLines').checked;
+        generateScatterGraph(xValues, yValues, xLabel, yLabel, title, pointSize, pointStyle, pointerColor, backgroundColor, legend,showXGridLines,showYGridLines);
+    }
+
+    function generateScatterGraph(xValues, yValues, xLabel, yLabel, title, pointSize, pointStyle, pointerColor, backgroundColor, legend,showXGridLines,showYGridLines) {
+        
+        var ctx = document.getElementById('scatterChart').getContext('2d');
+
+        if(window.myChart) {
+            window.myChart.destroy();
+        }
+        
+        window.myChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                labels: xValues,
+                datasets: [{
+                    label: title,
+                    data: xValues.map((x, i) => ({x, y: yValues[i]})),
+                    backgroundColor: backgroundColor,
+                    pointBorderColor: pointerColor,
+                    pointBackgroundColor: pointerColor,
+                    pointBorderWidth: 1,
+                    pointRadius: pointSize,
+                    pointHoverRadius: pointSize + 2,
+                    pointStyle: pointStyle,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: xLabel
+                        },
+                        grid: {
+                            display: showXGridLines
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: yLabel
+                        },
+                        grid: {
+                            display: showYGridLines
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                            position: legend,
+                            align: 'center',
+                            labels: {
+                                color: '#f72541',
+                                font: {
+                                weight: 'bold'
+                                },
+                            }
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+</html>

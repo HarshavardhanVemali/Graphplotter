@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRAPH PLOTTER</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/graphicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="multiline.css"> <!-- New CSS for multibar -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js library -->
+</head>
+<body>
+    <header>
+        <a href="index.html">
+            <div>
+                <h1>GRAPH PLOTTER</h1>
+                <img src="/images/pulse.jpeg" alt="headerimg">
+            </div>
+        </a>
+    </header>
+    <div class="linegraph">
+        <div id="graphinputcontainer">
+            <h2>Multi Bar Graph</h2>
+            <form id="graphForm">
+                <div class="form-row">
+                    <label for="numberofgraphs">Number of Bar Graphs</label> <!-- Changed label -->
+                    <input type="number" id="barWidth" min="1" value="1"> <!-- Changed id -->
+                </div>
+                <div class="form-row">
+                    <label for="xValues">X-Values</label>
+                    <input type="text" id="xValues" placeholder="E.g., 1, 2, 3" required>
+                </div>
+                <div class="form-row">
+                    <label for="xLabel">X-Label</label>
+                    <input type="text" id="xLabel" placeholder="X-Label">
+                </div>
+                
+                <div class="form-row">
+                    <label for="yLabel">Y-Label</label>
+                    <input type="text" id="yLabel" placeholder="Y-Label">
+                </div>
+                
+                <div class="form-row">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" placeholder="Graph Title">
+                </div>
+
+                <div class="form-row">
+                    <label for="scale">Scale</label>
+                    <input type="text" id="scale" placeholder="Scale">
+                </div>      
+                
+                <div class="form-row">
+                    <label for="legend">Legend</label>
+                    <select id="legend">
+                        <option value="top">Top</option>
+                        <option value="right">Right</option>
+                        <option value="left">Left</option> <!-- Corrected value -->
+                        <option value="bottom">Bottom</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <label for="xGridLines">Show X Grid Lines</label>
+                    <input type="checkbox" id="xGridLines">
+                </div>
+                <div class="form-row">
+                    <label for="yGridLines">Show Y Grid Lines</label>
+                    <input type="checkbox" id="yGridLines">
+                </div>
+                <div class="form-row">
+                    <label for="horizontalbars">Horizontal Bars</label>
+                    <input type="checkbox" id="horizontalbars">
+                </div>
+                <div id="graphInputsContainer">
+                    <!-- Graph inputs will be loaded here -->
+                </div>
+                <div class="form-row">
+                    <button type="button" id="addBarButton">Add Plots</button> <!-- Changed button id -->
+                </div>
+                <div class="form-row">
+                    <button id="downloadBarGraphButton">Download Graph</button> <!-- Changed button id -->
+                </div>
+            </form>
+        </div>
+        <div id="graphdisplaycontainer">
+            <canvas id="barChart"></canvas> <!-- Changed id -->
+        </div>
+    </div>
+    <footer>
+        <h2>Contact Us</h2>
+        <div id="footer_links"> 
+            <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=GTvVlcSHvbKtqXmvxCqTRCSHfKQfrVLczjWpqJkfXMcZgFbWwxldrDnqxDKwLpbgCpTzmCvVQFbrS" target="_blank">
+                <img src="/images/email.webp" alt="Instagram">
+                <span>Email</span>
+            </a>
+            <a href="#" onclick="initiateCall('+91 7675922209')">
+                <img src="/images/Call.avif" alt="call">
+                <span>Call</span>
+            </a>
+            <a href="https://www.linkedin.com/in/harshavardhan-vemali-334976259/" target="_blank">
+                <img src="/images/Linked-in.png" alt="linked in">
+                <span>Linked-in</span>
+            </a>
+            <a href="https://github.com/HarshavardhanVemali" target="_blank">
+                <img src="/images/github.png" alt="Youtube">
+                <span>Github</span>
+            </a>
+        </div>
+        <h4>&copy; 2024. All rights reserved to <a href="https://harshaswebpage.netlify.app/" target="_blank" rel="noopener noreferrer">V.HarshaVardhan</a>.</h4>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            loadBarInputs();
+            renderBarGraph(); 
+            var inputFields = document.querySelectorAll('#graphForm input, #graphForm select');
+            inputFields.forEach(function (input) {
+                input.addEventListener('input', function () {
+                    renderBarGraph(); 
+                });
+            });
+            document.getElementById('barWidth').addEventListener('input', loadBarInputs);
+            document.addEventListener('input', function (event) {
+                if (event.target.matches('.bar-container input')) {
+                    renderBarGraph();
+                }
+            });
+            var downloadGraphButton = document.getElementById('downloadBarGraphButton');
+            downloadGraphButton.addEventListener('click', function() {
+                event.preventDefault();
+                var canvas = document.getElementById('barChart');
+                var link = document.createElement('a');
+                link.href = canvas.toDataURL();
+                link.download = 'graph.png';
+                link.click();
+            });
+        });
+        var deletedBars = []; 
+        function loadBarInputs() {
+                var numberOfBars = parseInt(document.getElementById('barWidth').value);
+                var barInputsContainer = document.getElementById('graphInputsContainer');
+                for (var i = barInputsContainer.children.length; i < numberOfBars; i++) {
+                    var barNumber = i +1;
+                    if (deletedBars.includes(barNumber)) {
+                        deletedBars.splice(deletedBars.indexOf(barNumber), 1);
+                    }
+                    var barInputsHTML = `
+                        <div class="bar-container" data-bar="${barNumber}">
+                            <h3>Bar ${barNumber}</h3>
+                            <div class="form-row">
+                                <label for="yValues${barNumber}">Y-Values</label>
+                                <input type="text" id="yValues${barNumber}" placeholder="E.g., 10, 20, 30" required>
+                            </div>
+                            <div class="form-row">
+                                <label for="barLabel${barNumber}">Bar ${barNumber}</label>
+                                <input type="text" id="barLabel${barNumber}" placeholder="Bar ${barNumber} Label">
+                            </div>
+                            <div class="form-row">
+                                <label for="barColor${barNumber}">Bar Color</label>
+                                <input type="color" id="barColor${barNumber}" value="#ff0000">
+                            </div>
+                            <div class="form-row">
+                                <button type="button" class="deleteBarButton" data-bar="${barNumber}">Delete Plot</button>
+                            </div>
+                        </div>`;
+                    barInputsContainer.insertAdjacentHTML('beforeend', barInputsHTML);
+                }
+                renderBarGraph();
+        }
+        function renderBarGraph() {
+            var xLabel = document.getElementById('xLabel').value.trim();
+            var yLabel = document.getElementById('yLabel').value.trim();
+            var title = document.getElementById('title').value.trim();
+            var legend = document.getElementById('legend').value;
+            var showXGridLines = document.getElementById('xGridLines').checked;
+            var showYGridLines = document.getElementById('yGridLines').checked;
+            var scale = document.getElementById('scale').value.trim();
+            var xValuesInput = document.getElementById('xValues').value.trim();
+            var xValues = xValuesInput.split(',').map(parseFloat);
+            var barData = [];
+            var numberOfBars = parseInt(document.getElementById('barWidth').value);
+            if(numberOfBars==0){
+                deletedBars=[];
+            }
+            for (var i = 1; i <= numberOfBars; i++) {
+
+                    var barLabel = document.getElementById(`barLabel${i}`).value.trim();
+                    var yValuesInput = document.getElementById(`yValues${i}`).value.trim();
+                    var barColor = document.getElementById(`barColor${i}`).value;
+                    var yValues = yValuesInput.split(',').map(parseFloat);
+
+                    barData.push({
+                        label: barLabel,
+                        data: yValues,
+                        backgroundColor: hexToRGBA(barColor,0.3)
+                    });
+            }
+
+            renderBarChart(barData, xValues, xLabel, yLabel, title, legend, showXGridLines, showYGridLines, scale); 
+        }
+        document.getElementById('addBarButton').addEventListener('click', function () {
+                var numberOfBars = parseInt(document.getElementById('barWidth').value);
+                numberOfBars++;
+                document.getElementById('barWidth').value = numberOfBars;
+                loadBarInputs();
+        });
+        document.addEventListener('click', function (event) {
+            if (event.target.classList.contains('deleteBarButton')) {
+                var barNumber = event.target.getAttribute('data-bar');
+                var barContainer = document.querySelector(`.bar-container[data-bar="${barNumber}"]`);
+                if (barContainer) {
+                    barContainer.remove();
+                    deletedBars.push(parseInt(barNumber));
+                    var numberOfBars = parseInt(document.getElementById('barWidth').value) - 1;
+                    document.getElementById('barWidth').value = numberOfBars;
+                    for (var i = parseInt(barNumber) + 1; i <= numberOfBars + deletedBars.length; i++) {
+                        var currentBarContainer = document.querySelector(`.bar-container[data-bar="${i}"]`);
+                        if (currentBarContainer) {
+                            currentBarContainer.dataset.bar = i - 1;
+                            currentBarContainer.querySelector(`#yValues${i}`).id = `yValues${i - 1}`;
+                            currentBarContainer.querySelector(`#barLabel${i}`).id = `barLabel${i - 1}`;
+                            currentBarContainer.querySelector(`#barLabel${i - 1}`).value = `Bar ${i - 1}`;
+                            currentBarContainer.querySelector(`#barColor${i}`).id = `barColor${i - 1}`;
+                            currentBarContainer.querySelector(`.deleteBarButton`).setAttribute('data-bar', i - 1);
+                            currentBarContainer.querySelector('h3').innerHTML = `Bar ${i - 1}`;
+                        }
+                    }
+                    renderBarGraph();
+                }
+            }
+        });
+        function renderBarChart(data, xValues, xLabel, yLabel, title, legend, showXGridLines, showYGridLines, scale) {
+            var ctx = document.getElementById('barChart').getContext('2d');
+            if (window.myBarChart) {
+                window.myBarChart.destroy();
+            }
+            var chartType = document.getElementById('horizontalbars').checked ? 'y' : 'x';
+            window.myBarChart = new Chart(ctx, {
+                type: 'bar',
+
+                data: {
+                    labels: xValues,
+                    datasets: data,
+                },
+                options: {
+                    indexAxis: chartType,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: xLabel
+                            },
+                            grid: {
+                                display: showXGridLines
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: yLabel
+                            },
+                            grid: {
+                                display: showYGridLines
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: legend,
+                            align: 'center',
+                            labels: {
+                                color: 'black',
+                                font:{
+                                    weight:'bold'
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            usePointStyle: true,
+                            text: title
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            left: 50,
+                            right: 50,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+                    responsive: true,
+                    aspectRatio: scale ? parseFloat(scale) : undefined,
+                }
+            });
+        }
+        function hexToRGBA(hex, opacity) {
+            hex = hex.replace('#', '');
+            var r = parseInt(hex.substring(0, 2), 16);
+            var g = parseInt(hex.substring(2, 4), 16);
+            var b = parseInt(hex.substring(4, 6), 16);
+
+            return 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ')';
+        }
+    </script>
+</body>
+</html>

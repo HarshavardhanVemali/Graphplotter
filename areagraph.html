@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRAPH PLOTTER</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/graphicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="lines.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="scripts.js"></script>
+</head>
+<style>
+#minlabel,#maxlabel{
+    width: 100px;
+}
+#minx,#maxx,#maxy,#miny{
+width: 100px;
+margin-right: 20px;
+}
+@media only screen and (max-width: 375px) {
+    #minlabel,#maxlabel{
+        font-size: 8px;
+        width: calc(20% - 50px);
+    }
+    #minx,#maxx,#maxy,#miny{
+        width: calc(80% - 10px);
+    width: 50px;
+    margin-right: 20px;
+    }
+}
+@media only screen and (min-width: 376px) and (max-width: 480px) {
+    #minlabel,#maxlabel{
+        font-size: 10px;
+        width: calc(30% - 50px);
+    }
+    #minx,#maxx,#maxy,#miny{
+        width: calc(70% - 10px);
+    width: 50px;
+    margin-right: 20px;
+    }
+}
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+    #minlabel,#maxlabel{
+        font-size: 12px;
+        width: calc(30% - 50px);
+    }
+    #minx,#maxx,#maxy,#miny{
+        width: calc(70% - 10px);
+    width: 50px;
+    margin-right: 20px;
+    }
+
+}
+</style>
+<body>
+    <header>
+        <a href="index.html">
+            <div>
+                <h1>GRAPH PLOTTER</h1>
+                <img src="/images/pulse.jpeg" alt="headerimg">
+            </div>
+        </a>
+    </header>
+    <div class="linegraph">
+        <div id="graphinputcontainer">
+            <h2>Area Graph</h2>
+            <form id="graphForm">
+                <div class="form-row">
+                    <label for="xValues">X-Values</label>
+                    <input type="text" id="xValues" placeholder="E.g., 1, 2, 3" required>
+                </div>
+                <div class="form-row">
+                    <label for="yValues">Y-Values</label>
+                    <input type="text" id="yValues" placeholder="E.g., 10, 20, 30" required>
+                </div>
+                <div class="form-row">
+                    <label for="xLabel">X-Label</label>
+                    <input type="text" id="xLabel" placeholder="X-Label">
+                </div>
+                
+                <div class="form-row">
+                    <label for="yLabel">Y-Label</label>
+                    <input type="text" id="yLabel" placeholder="Y-Label">
+                </div>
+                
+                <div class="form-row">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" placeholder="Graph Title">
+                </div>
+                <div class="form-row">
+                    <label for="scale">Scale</label>
+                    <input type="text" id="scale" placeholder="Scale">
+                </div>   
+                <div class="form-row">
+                    <label for="lineColor">Line Color</label>
+                    <input type="color" id="lineColor" value="#ff0000">
+                </div>
+                <div class="form-row">
+                    <label for="backgroundColor">Background Color</label>
+                    <input type="color" id="backgroundColor" value="#ed9196">
+                </div>
+                
+                <div class="form-row">
+                    <label for="legend">Legend</label>
+                    <select id="legend">
+                        <option value="top">Top</option>
+                        <option value="right">Right</option>
+                        <option value="left">Left</option>
+                        <option value="bottom">Bottom</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="min" id="minlabel">Minimum X-Values</label>
+                    <input type="number" id="minx" placeholder="Min" value="">
+                    <label for="max" id="maxlabel">Maximum X-Values</label>
+                    <input type="number" id="maxx" placeholder="Max" value="">
+                </div>
+                <div class="form-row">
+                    <label for="min" id="minlabel">Minimum Y-Values</label>
+                    <input type="number" id="miny" placeholder="Min" value="">
+                    <label for="max" id="maxlabel">Maximum Y-Values</label>
+                    <input type="number" id="maxy" placeholder="Max" value="">
+                </div>
+                <div class="form-row">
+                    <label for="xGridLines">Show X Grid Lines</label>
+                    <input type="checkbox" id="xGridLines">
+                </div>
+                <div class="form-row">
+                    <label for="yGridLines">Show Y Grid Lines</label>
+                    <input type="checkbox" id="yGridLines">
+                </div>
+                <div class="form-row">
+                    <button id="downloadGraphButton">Download Graph</button>
+                </div>
+            </form>
+        </div>
+        <div id="graphdisplaycontainer">
+            <canvas id="areaChart"></canvas>
+        </div>
+    </div>       
+    <footer>
+        <h2>Contact Us</h2>
+        <div id="footer_links"> 
+            <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=GTvVlcSHvbKtqXmvxCqTRCSHfKQfrVLczjWpqJkfXMcZgFbWwxldrDnqxDKwLpbgCpTzmCvVQFbrS" target="_blank">
+                <img src="/images/email.webp" alt="Instagram">
+                <span>Email</span>
+            </a>
+            <a onclick="initiateCall('+91 7675922209')">
+                <img src="/images/Call.avif" alt="call">
+                <span>Call</span>
+            </a>
+            <a href="https://www.linkedin.com/in/harshavardhan-vemali-334976259/" target="_blank">
+                <img src="/images/Linked-in.png" alt="linked in">
+                <span>Linked-in</span>
+            </a>
+            <a href="https://github.com/HarshavardhanVemali" target="_blank">
+                <img src="/images/github.png" alt="Youtube">
+                <span>Github</span>
+            </a>
+        </div>
+        <h4>&copy; 2024. All rights reserved to <a href="https://harshaswebpage.netlify.app/" target="_blank" rel="noopener noreferrer">V.HarshaVardhan</a>.</h4>
+    </footer>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        generateGraph();
+
+        var inputFields = document.querySelectorAll('#graphForm input, #graphForm select');
+        inputFields.forEach(function (input) {
+            input.addEventListener('input', function () {
+                generateGraph();
+            });
+        });
+
+        var downloadGraphButton = document.getElementById('downloadGraphButton');
+        downloadGraphButton.addEventListener('click', function() {
+            event.preventDefault();
+            var canvas = document.getElementById('areaChart');
+            var link = document.createElement('a');
+            link.href = canvas.toDataURL();
+            link.download = 'graph.png';
+            link.click();
+        });
+    });
+
+    function generateGraph() {
+        var xValues = document.getElementById('xValues').value.split(',').map(function(value) {
+            return value.trim() !== '' ? parseFloat(value) : 0;
+        });
+        var yValues = document.getElementById('yValues').value.split(',').map(function(value) {
+            return value.trim() !== '' ? parseFloat(value) : 0;
+        });
+        var xLabel = document.getElementById('xLabel').value;
+        var yLabel = document.getElementById('yLabel').value;
+        var title = document.getElementById('title').value;
+        var backgroundColor = document.getElementById('backgroundColor').value;
+        var lineColor = document.getElementById('lineColor').value;
+        var legend = document.getElementById('legend').value;
+        var showXGridLines = document.getElementById('xGridLines').checked;
+        var showYGridLines = document.getElementById('yGridLines').checked;
+        var minx = document.getElementById('minx').value.trim() !== '' ? parseFloat(document.getElementById('minx').value) : Math.min(...xValues);
+        var maxx = document.getElementById('maxx').value.trim() !== '' ? parseFloat(document.getElementById('maxx').value) : Math.max(...xValues);
+        var miny = document.getElementById('miny').value.trim() !== '' ? parseFloat(document.getElementById('miny').value) : Math.min(...yValues);
+        var maxy = document.getElementById('maxy').value.trim() !== '' ? parseFloat(document.getElementById('maxy').value) : Math.max(...yValues);
+        var scale = document.getElementById('scale').value.trim();
+        generateAreaGraph(xValues, scale,yValues, xLabel, yLabel, title, backgroundColor, legend, showXGridLines, showYGridLines,lineColor,minx,miny,maxx,maxy);
+    }
+
+    function generateAreaGraph(xValues, scale,yValues, xLabel, yLabel, title, backgroundColor, legend, showXGridLines, showYGridLines,lineColor,minx,miny,maxx,maxy) {
+        
+        var ctx = document.getElementById('areaChart').getContext('2d');
+
+        if(window.myChart) {
+            window.myChart.destroy();
+        }
+        
+        window.myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: xValues,
+                datasets: [{
+                    label: title,
+                    data: yValues,
+                    fill: true,
+                    backgroundColor: hexToRGBA(backgroundColor,0.3), // Change background color of the shaded area
+                    borderColor: lineColor,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: xLabel
+                        },
+                        grid: {
+                            display: showXGridLines
+                        },
+                        min:minx,
+                        max:maxx
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: yLabel
+                        },
+                        grid: {
+                            display: showYGridLines
+                        },
+                        min:miny,
+                        max:maxy
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: legend,
+                        align: 'center',
+                        labels: {
+                            color: '#f72541',
+                            font: {
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                },
+                layout: {
+                    padding: {
+                        left: 50,
+                        right: 50,
+                        top: 0,
+                        bottom: 0
+                    }
+                },
+                responsive: true,
+                aspectRatio: scale ? parseFloat(scale) : undefined,
+            }
+        });
+    }
+    function hexToRGBA(hex, opacity) {
+            hex = hex.replace('#', '');
+            var r = parseInt(hex.substring(0, 2), 16);
+            var g = parseInt(hex.substring(2, 4), 16);
+            var b = parseInt(hex.substring(4, 6), 16);
+
+            return 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ')';
+        }
+</script>
+
+
+</html>

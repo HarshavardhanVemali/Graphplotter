@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRAPH PLOTTER</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/graphicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="lines.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+</head>
+<body>
+    <header>
+        <a href="index.html">
+            <div>
+                <h1>GRAPH PLOTTER</h1>
+                <img src="/images/pulse.jpeg" alt="headerimg">
+            </div>
+        </a>
+    </header>
+    <div class="linegraph">
+        <div id="graphinputcontainer">
+            <h2>Linear Graph</h2>
+            <form id="graphForm"> <!-- Prevent form submission -->
+                <div class="form-row">
+                    <label for="equation">Linear Equation</label>
+                    <input type="text" id="equation" placeholder="E.g.,y=2*x+3" value="">
+                </div>
+                <div class="form-row">
+                    <label for="xLabel">X-Label</label>
+                    <input type="text" id="xLabel" placeholder="X-Label" value="">
+                </div>
+                
+                <div class="form-row">
+                    <label for="yLabel">Y-Label</label>
+                    <input type="text" id="yLabel" placeholder="Y-Label" value="">
+                </div>
+                <div class="form-row">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" placeholder="Graph Title" value="">
+                </div>
+                <div class="form-row">
+                    <label for="scale">Scale</label>
+                    <input type="text" id="scale" placeholder="Scale" value="">
+                </div>
+                
+                <div class="form-row">
+                    <label for="lineColor">Line Color</label>
+                    <input type="color" id="lineColor" value="#ff0000">
+                </div>
+                
+                <div class="form-row">
+                    <label for="lineWidth">Line Width</label>
+                    <input type="number" id="lineWidth" min="1" value="1">
+                </div>
+                
+                
+                <div class="form-row">
+                    <label for="legend">Legend</label>
+                    <select id="legend">
+                        <option value="top">Top</option>
+                        <option value="right">Right</option>
+                        <option value="left">Left</option>
+                        <option value="bottom">Bottom</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="xGridLines">Show X Grid Lines</label>
+                    <input type="checkbox" id="xGridLines" checked>
+                </div>
+                <div class="form-row">
+                    <label for="yGridLines">Show Y Grid Lines</label>
+                    <input type="checkbox" id="yGridLines" checked>
+                </div>
+                <div class="form-row">
+                    <button id="downloadGraphButton">Download Graph</button>
+                </div>
+            </form>
+        </div>
+        <div id="graphdisplaycontainer">
+            <canvas id="linearChart"></canvas>
+        </div>
+    </div>
+    <footer>
+        <h2>Contact Us</h2>
+        <div id="footer_links"> 
+            <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=GTvVlcSHvbKtqXmvxCqTRCSHfKQfrVLczjWpqJkfXMcZgFbWwxldrDnqxDKwLpbgCpTzmCvVQFbrS" target="_blank">
+                <img src="/images/email.webp" alt="Instagram">
+                <span>Email</span>
+            </a>
+            <a onclick="initiateCall('+91 7675922209')">
+                <img src="/images/Call.avif" alt="call">
+                <span>Call</span>
+            </a>
+            <a href="https://www.linkedin.com/in/harshavardhan-vemali-334976259/" target="_blank">
+                <img src="/images/Linked-in.png" alt="linked in">
+                <span>Linked-in</span>
+            </a>
+            <a href="https://github.com/HarshavardhanVemali" target="_blank">
+                <img src="/images/github.png" alt="Youtube">
+                <span>Github</span>
+            </a>
+        </div>
+        <h4>&copy; 2024. All rights reserved to <a href="https://harshaswebpage.netlify.app/" target="_blank" rel="noopener noreferrer">V.HarshaVardhan</a>.</h4>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeEmptyGraph();
+    
+            var inputFields = document.querySelectorAll('#graphForm input, #graphForm select');
+            inputFields.forEach(function (input) {
+                input.addEventListener('input', function () {
+                    generateGraph();
+                });
+            });
+        });
+    
+        function initializeEmptyGraph() {
+            generateLinearGraph('', '', '', '', '', '#000000', 1, 'top', true, true);
+        }
+    
+        function generateGraph() {
+            var equation = document.getElementById("equation").value;
+            var xLabel = document.getElementById("xLabel").value;
+            var yLabel = document.getElementById("yLabel").value;
+            var title = document.getElementById("title").value;
+            var xGridLines = document.getElementById("xGridLines").checked;
+            var yGridLines = document.getElementById("yGridLines").checked;
+            var scale = document.getElementById('scale').value;
+            var lineColor = document.getElementById('lineColor').value;
+            var lineWidth = parseInt(document.getElementById('lineWidth').value);
+            var legendPosition = document.getElementById('legend').value;
+            generateLinearGraph(equation, xLabel, yLabel, title, scale, lineColor, lineWidth, legendPosition, xGridLines, yGridLines);
+        }
+    
+        function generateLinearGraph(equation, xLabel, yLabel, title, scale, lineColor, lineWidth, legendPosition, xGridLines, yGridLines) {
+    var ctx = document.getElementById('linearChart').getContext('2d');
+    var labels = [];
+    var data = [];
+
+    if (equation !== '') {
+        // Parse equation to extract slope and intercept
+        var parts = equation.split("=");
+        var expression = parts[1].trim();
+
+        var slope = 1;
+        var intercept = 0; 
+
+        if (expression.includes("x")) {
+            var slopeIntercept = expression.split("x");
+            slope = parseFloat(slopeIntercept[0]);
+            intercept = parseFloat(slopeIntercept[1]);
+        } else {
+            slope = 0;
+            intercept = parseFloat(expression);
+        }
+
+        // Generate data points
+        for (var i = -10; i <= 10; i++) {
+            labels.push(i);
+            data.push(slope * i + intercept);
+        }
+
+        if (slope !== 0) {
+            var yIntercept = intercept;
+            addHorizontalLine(yIntercept);
+        }
+    }
+
+    function addHorizontalLine(yValue) {
+        var horizontalLineData = Array.from({ length: labels.length }, () => yValue); // Array filled with yValue
+        var horizontalLine = {
+            label: 'y = ' + yValue,
+            data: horizontalLineData,
+            borderColor: 'blue', // You can set the color of the line here
+            borderWidth: 1,
+            fill: false,
+            borderDash: [5, 5] // You can adjust the dash pattern here
+        };
+
+        // Push the horizontal line dataset
+        data.push(horizontalLine);
+    }
+
+    if (window.myChart) {
+        window.myChart.destroy();
+    }
+
+    window.myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: equation,
+                data: data,
+                borderColor: lineColor,
+                borderWidth: lineWidth
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: xLabel
+                    },
+                    grid: {
+                        display: xGridLines
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: yLabel
+                    },
+                    grid: {
+                        display: yGridLines
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: title
+                },
+                legend: {
+                    display: true,
+                    position: legendPosition,
+                    align: 'center',
+                    labels: {
+                        color: '#f72541',
+                        font: {
+                            weight: 'bold'
+                        },
+                    }
+                }
+            },
+            layout: {
+                padding: {
+                    left: 50,
+                    right: 50,
+                    top: 0,
+                    bottom: 0
+                }
+            },
+            responsive: true,
+            aspectRatio: scale ? parseFloat(scale) : undefined,
+        }
+    });
+}
+
+    </script>
+    
+
+</body>
+</html>

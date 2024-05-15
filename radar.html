@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRAPH PLOTTER</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/graphicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="multiline.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+</head>
+<style>
+    #graphdisplaycontainer{
+        height: 700px;
+        justify-content: center;
+        align-items: center;
+    }
+    #RadarChartCanvas{
+        margin-left: 15%;
+    }
+    @media only screen and (max-width: 375px) {
+        #graphdisplaycontainer{
+        height: auto;
+        justify-content: center;
+        align-items: center;
+    }
+    }
+    @media only screen and (min-width: 376px) and (max-width: 480px) {
+        #graphdisplaycontainer{
+        height: auto;
+        justify-content: center;
+        align-items: center;
+    }
+
+    }
+    @media only screen and (min-width: 481px) and (max-width: 768px) {
+        #graphdisplaycontainer{
+        height: auto;
+        justify-content: center;
+        align-items: center;
+    }
+    }
+</style>
+<body>
+    <header>
+        <a href="index.html">
+            <div>
+                <h1>GRAPH PLOTTER</h1>
+                <img src="/images/pulse.jpeg" alt="headerimg">
+            </div>
+        </a>
+    </header>
+    <div class="linegraph">
+        <div id="graphinputcontainer">
+            <h2>Radar Chart</h2>
+            <form id="graphForm">
+                <div class="form-row">
+                    <label for="xValues">Labels</label>
+                    <input type="text" id="xValues" placeholder="E.g., Category 1, Category 2, ..." required>
+                </div>
+                
+                <div class="form-row">
+                    <label for="yValues">Values</label>
+                    <input type="text" id="yValues" placeholder="E.g., 10, 20, 30, ..." required>
+                </div>
+                <div class="form-row">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" placeholder="Graph Title">
+                </div>
+                <div class="form-row">
+                    <label for="lineWidth">Border Width</label>
+                    <input type="number" id="lineWidth" min="1" value="1">
+                </div>
+                <div class="form-row">
+                    <label for="lineColor">Background Color</label>
+                    <input type="color" id="lineColor" value="#ff0000">
+                </div>
+                <div class="form-row">
+                    <label for="legend">Legend</label>
+                    <select id="legend">
+                        <option value="top">Top</option>
+                        <option value="right">Right</option>
+                        <option value="left">Left</option>
+                        <option value="bottom">Bottom</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <button id="downloadGraphButton">Download Graph</button>
+                </div>
+            </form>
+        </div>
+        <div id="graphdisplaycontainer">
+            <canvas id="RadarChartCanvas" style="width: 500px;height: 500px;"></canvas>
+        </div>
+    </div>
+    <footer>
+        <h2>Contact Us</h2>
+        <div id="footer_links"> 
+            <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=GTvVlcSHvbKtqXmvxCqTRCSHfKQfrVLczjWpqJkfXMcZgFbWwxldrDnqxDKwLpbgCpTzmCvVQFbrS" target="_blank">
+                <img src="/images/email.webp" alt="Instagram">
+                <span>Email</span>
+            </a>
+            <a onclick="initiateCall('+91 7675922209')">
+                <img src="/images/Call.avif" alt="call">
+                <span>Call</span>
+            </a>
+            <a href="https://www.linkedin.com/in/harshavardhan-vemali-334976259/" target="_blank">
+                <img src="/images/Linked-in.png" alt="linked in">
+                <span>Linked-in</span>
+            </a>
+            <a href="https://github.com/HarshavardhanVemali" target="_blank">
+                <img src="/images/github.png" alt="Youtube">
+                <span>Github</span>
+            </a>
+        </div>
+        <h4>&copy; 2024. All rights reserved to <a href="https://harshaswebpage.netlify.app/" target="_blank" rel="noopener noreferrer">V.HarshaVardhan</a>.</h4>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            generateGraph();
+            var inputFields = document.querySelectorAll('#graphForm input, #graphForm select');
+            inputFields.forEach(function (input) {
+                input.addEventListener('input', function () {
+                    generateGraph();
+                });
+            });
+            var downloadGraphButton = document.getElementById('downloadGraphButton');
+            if (downloadGraphButton) {
+                downloadGraphButton.addEventListener('click', function() {
+                    event.preventDefault();
+                    var canvas = document.getElementById('RadarChartCanvas');
+                    var link = document.createElement('a');
+                    link.href = canvas.toDataURL();
+                    link.download = 'graph.png';
+                    link.click();
+                });
+            }
+        });
+
+        document.getElementById('yValues').addEventListener('input', function() {
+            generateGraph();
+        });
+
+        function generateGraph() {
+            var xValues = document.getElementById('xValues').value.split(',').map(function(value) {
+                return value.trim() !== '' ? value.trim() : 'Unknown';
+            });
+            var yValues = document.getElementById('yValues').value.split(',').map(function(value) {
+                return value.trim() !== '' ? parseFloat(value) : 0;
+            });
+            var title = document.getElementById('title').value;
+            var borderWidth=document.getElementById('lineWidth').value;
+            var backgroundColor=document.getElementById('lineColor').value;
+            var legendPosition = document.getElementById('legend').value;
+            generateRadarChart(xValues, yValues, title, legendPosition,borderWidth,backgroundColor);
+        }
+
+        function generateRadarChart(xValues, yValues, title, legendPosition,borderWidth,backgroundColor) {
+            var ctx = document.getElementById('RadarChartCanvas').getContext('2d');
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+            window.myChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        label: title,
+                        data: yValues,
+                        backgroundColor: hexToRGBA(backgroundColor, 0.3),
+                        borderColor: hexToRGBA(backgroundColor, 0.5),
+                        borderWidth: borderWidth,
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: legendPosition,
+                            align: 'center'
+                        }
+                    }
+                }
+            });
+        }
+        function hexToRGBA(hex, opacity) {
+            hex = hex.replace('#', '');
+            var r = parseInt(hex.substring(0, 2), 16);
+            var g = parseInt(hex.substring(2, 4), 16);
+            var b = parseInt(hex.substring(4, 6), 16);
+
+            return 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ')';
+        }
+    </script>
+</body>
+</html>
