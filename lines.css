@@ -694,3 +694,7 @@ canvas#lineChart {
         width: 100%;
     }
 }
+a {
+    outline: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /* Removes the blue highlight on tap */
+}
